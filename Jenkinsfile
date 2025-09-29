@@ -36,7 +36,8 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo "Deploy the Artifact..."
+                echo "Deploying the Artifact..."
+                //sh 'scp -i /home/ubuntu/Jenkins.pem /home/ubuntu/workspace/Project_9/target/hello-1.0.war ubuntu@3.80.92.210:/home/ubuntu/apache-tomcat-9.0.109/webapps'
 
             }
         }
@@ -44,10 +45,10 @@ pipeline {
 
     post {
         success {
-            echo "✔BUILD AND TEST STAGE SUCCESSFUL...!!!"
+            echo "✔️BUILD AND TEST STAGE SUCCESSFUL...!!!"
             // Updated: allow empty results to prevent failure if no tests
-            junit allowEmptyResults: true, testResults: '/target/surefire-reports/TEST-*.xml'
-            archiveArtifacts artifacts: 'target/*.jar', onlyIfSuccessful: true
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/*.war', onlyIfSuccessful: true
         }
 
         failure {
@@ -59,6 +60,6 @@ pipeline {
 
         always {
             echo "🔸🔸🔸You are executed the build🔸🔸🔸!!!"
-        }
-    }
+        }
+    }
 }
