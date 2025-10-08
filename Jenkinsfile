@@ -37,19 +37,29 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploying the Artifact..."
+               
+                }
+        }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo "Running SonarQube Analysis..."
+                withSonarQubeEnv('Sonar') {
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
-    } 
-    stage {
-        steps {
-            echo "running sonarqube analysis"
-            withSonarQubeEnv('Sonar') {
-                sh 'mvn sonar:sonar'
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
-    }
-    // End of stages
+
+    } // End of stages
+
 
     post {
         success {
